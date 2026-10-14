@@ -4,30 +4,22 @@ with customers as (
 
 ),
 
-orders as (
+order_payments as (
 
-    select * from {{ ref('stg_jaffle_shop__orders')}}
-
-),
-
-payments as (
-
-    select * from {{ ref('stg_stripe__payments')}}
+    select * from {{ ref('fct_orders')}}
 
 ),
 
 customer_orders as (
 
     select
-        orders.customer_id,
+        customer_id,
+        min(order_date) as first_order_date,
+        max(order_date) as most_recent_order_date,
+        count(order_id) as number_of_orders,
+        SUM(amount) AS lifetime_value
 
-        min(orders.order_date) as first_order_date,
-        max(orders.order_date) as most_recent_order_date,
-        count(orders.order_id) as number_of_orders,
-        SUM(payments.amount) AS lifetime_value
-
-    from orders
-    left join payments using (order_id)
+    from order_payments
 
     group by 1
 

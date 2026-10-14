@@ -16,11 +16,13 @@ final as (
     select
         orders.order_id,
         orders.customer_id,
-        payments.amount
+        orders.order_date,
+        SUM(case when payments.status = 'success' then payments.amount end) AS amount
 
     from orders
-
     left join payments using (order_id)
+    
+    GROUP BY 1,2,3
 
 )
 
