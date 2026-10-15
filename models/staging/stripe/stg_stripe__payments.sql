@@ -5,4 +5,5 @@
         STATUS as status,
         AMOUNT / 100 as amount, -- amount is stored in cents, convert to dollars
         CREATED as created
-    from raw.stripe.payments
+
+    from {{ source('stripe', 'payments')}}
